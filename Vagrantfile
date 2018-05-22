@@ -12,7 +12,17 @@ Vagrant.configure("2") do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
-  config.vm.box = "bento/ubuntu-16.04"
+
+  config.vm.define 'vagrant_ansible' do |va|
+    va.vm.box = "bento/ubuntu-16.04"
+    va.vm.host_name = 'hiepdinh.va'
+    va.vm.network :private_network, ip: '192.168.33.151'
+
+    va.vm.provision :ansible do |ansible|
+      ansible.playbook = 'provisioning/playbook.yml'
+      # ansible.limit = "all"
+    end
+  end
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -48,15 +58,18 @@ Vagrant.configure("2") do |config|
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
-  #
-  # config.vm.provider "virtualbox" do |vb|
-  #   # Display the VirtualBox GUI when booting the machine
-  #   vb.gui = true
-  #
-  #   # Customize the amount of memory on the VM:
-  #   vb.memory = "1024"
-  # end
-  #
+
+  config.vm.synced_folder '.', '/vagrant'#, type: 'nfs'
+
+  config.vm.provider "virtualbox" do |vb|
+    # Display the VirtualBox GUI when booting the machine
+    # vb.gui = true
+
+    # Customize the amount of memory on the VM:
+    vb.memory = "512"
+    vb.cpus = 2
+  end
+
   # View the documentation for the provider you are using for more
   # information on available options.
 
